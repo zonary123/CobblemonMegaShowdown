@@ -10,6 +10,7 @@ import com.github.yajatkaul.mega_showdown.components.MegaShowdownDataComponents;
 import com.github.yajatkaul.mega_showdown.config.MegaShowdownConfig;
 import com.github.yajatkaul.mega_showdown.creative.MegaShowdownTabs;
 import com.github.yajatkaul.mega_showdown.item.custom.DebugStick;
+import com.github.yajatkaul.mega_showdown.item.custom.TeraPouch;
 import com.github.yajatkaul.mega_showdown.item.custom.ToolTipItem;
 import com.github.yajatkaul.mega_showdown.item.custom.dynamax.DynamaxCandy;
 import com.github.yajatkaul.mega_showdown.item.custom.dynamax.MaxHoney;
@@ -857,6 +858,8 @@ public class MegaShowdownItems {
     public static final RegistrySupplier<Item> LUSTROUS_ORB = registerTooltipItem("lustrous_orb", MegaShowdownTabs.COMPI_TAB);
     public static final RegistrySupplier<Item> ADRENALINE_ORB = registerTooltipItem("adrenaline_orb", MegaShowdownTabs.COMPI_TAB);
     public static final RegistrySupplier<Item> SOUL_DEW = registerTooltipItem("soul_dew", MegaShowdownTabs.COMPI_TAB);
+
+    public static final RegistrySupplier<Item> TERA_POUCH = registerItem("tera_pouch", () -> new TeraPouch(new Item.Properties().stacksTo(1).arch$tab(MegaShowdownTabs.KEY_TAB)));
 
     private static RegistrySupplier<Item> registerFormChangeInteractItem(String name,
                                                                          String form_name,

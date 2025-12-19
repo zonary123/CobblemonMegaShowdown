@@ -1,4 +1,4 @@
-package com.github.yajatkaul.mega_showdown.screen.custom;
+package com.github.yajatkaul.mega_showdown.screen.custom.slot;
 
 import com.github.yajatkaul.mega_showdown.item.MegaShowdownItems;
 import net.minecraft.world.Container;

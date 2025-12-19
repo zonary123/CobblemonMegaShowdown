@@ -6,7 +6,8 @@ import com.github.yajatkaul.mega_showdown.block.MegaShowdownBlockEntities;
 import com.github.yajatkaul.mega_showdown.block.block_entity.renderer.PedestalBlockEntityRenderer;
 import com.github.yajatkaul.mega_showdown.render.ItemRenderingLoader;
 import com.github.yajatkaul.mega_showdown.screen.MegaShowdownMenuTypes;
-import com.github.yajatkaul.mega_showdown.screen.custom.ZygardeCubeScreen;
+import com.github.yajatkaul.mega_showdown.screen.custom.screen.TeraPouchScreen;
+import com.github.yajatkaul.mega_showdown.screen.custom.screen.ZygardeCubeScreen;
 import dev.architectury.registry.ReloadListenerRegistry;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -31,6 +32,7 @@ public class MegaShowdownNeoForgeClient {
     @SubscribeEvent
     public static void registerScreens(RegisterMenuScreensEvent event) {
         event.register(MegaShowdownMenuTypes.ZYGARDE_CUBE_MENU.get(), ZygardeCubeScreen::new);
+        event.register(MegaShowdownMenuTypes.TERA_POUCH_MENU.get(), TeraPouchScreen::new);
     }
 
     @SubscribeEvent

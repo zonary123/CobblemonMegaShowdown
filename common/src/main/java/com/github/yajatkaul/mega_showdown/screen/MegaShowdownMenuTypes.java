@@ -1,7 +1,8 @@
 package com.github.yajatkaul.mega_showdown.screen;
 
 import com.github.yajatkaul.mega_showdown.MegaShowdown;
-import com.github.yajatkaul.mega_showdown.screen.custom.ZygardeCubesScreenHandler;
+import com.github.yajatkaul.mega_showdown.screen.custom.handler.TeraPouchScreenHandler;
+import com.github.yajatkaul.mega_showdown.screen.custom.handler.ZygardeCubesScreenHandler;
 import dev.architectury.registry.registries.DeferredRegister;
 import dev.architectury.registry.registries.RegistrySupplier;
 import net.minecraft.core.registries.Registries;
@@ -27,5 +28,6 @@ public class MegaShowdownMenuTypes {
     public static final RegistrySupplier<MenuType<ZygardeCubesScreenHandler>> ZYGARDE_CUBE_MENU =
             registerMenuType("zygade_menu", ZygardeCubesScreenHandler::new);
 
-
+    public static final RegistrySupplier<MenuType<TeraPouchScreenHandler>> TERA_POUCH_MENU =
+            registerMenuType("tera_pouch", TeraPouchScreenHandler::new);
 }

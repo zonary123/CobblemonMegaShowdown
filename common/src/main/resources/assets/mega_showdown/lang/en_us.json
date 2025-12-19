@@ -628,5 +628,7 @@
   "message.mega_showdown.no_mega_bracelet": "No mega bracelet",
   "message.mega_showdown.no_z_ring": "No Z-ring",
 
-  "cobblemon.ui.stats.dynamax_level": "Dynamax Level"
+  "cobblemon.ui.stats.dynamax_level": "Dynamax Level",
+
+  "menu.tera_pouch": "Tera Pouch"
 }

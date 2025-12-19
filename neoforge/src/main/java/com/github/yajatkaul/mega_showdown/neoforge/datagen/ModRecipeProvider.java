@@ -757,5 +757,16 @@ public class ModRecipeProvider extends RecipeProvider {
                 )
                 .unlockedBy("has_meteor", has(MegaShowdownBlocks.MEGA_METEOROID_BLOCK.get()))
                 .save(recipeOutput, "polished_meteor_from_blasting");
+
+
+
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, MegaShowdownItems.TERA_POUCH.get())
+                .pattern(" A ")
+                .pattern("LPL")
+                .pattern("LLL")
+                .define('A', Items.CYAN_DYE)
+                .define('L', Items.LEATHER)
+                .define('P', Items.BLAZE_POWDER)
+                .unlockedBy("has_blaze_powder", has(Items.BLAZE_POWDER)).save(recipeOutput);
     }
 }

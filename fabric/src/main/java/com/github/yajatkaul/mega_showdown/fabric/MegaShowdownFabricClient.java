@@ -7,7 +7,8 @@ import com.github.yajatkaul.mega_showdown.block.MegaShowdownBlocks;
 import com.github.yajatkaul.mega_showdown.block.block_entity.renderer.PedestalBlockEntityRenderer;
 import com.github.yajatkaul.mega_showdown.render.ItemRenderingLoader;
 import com.github.yajatkaul.mega_showdown.screen.MegaShowdownMenuTypes;
-import com.github.yajatkaul.mega_showdown.screen.custom.ZygardeCubeScreen;
+import com.github.yajatkaul.mega_showdown.screen.custom.screen.TeraPouchScreen;
+import com.github.yajatkaul.mega_showdown.screen.custom.screen.ZygardeCubeScreen;
 import dev.architectury.registry.ReloadListenerRegistry;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap;
@@ -26,6 +27,8 @@ public final class MegaShowdownFabricClient implements ClientModInitializer {
     public void onInitializeClient() {
         ReloadListenerRegistry.register(PackType.CLIENT_RESOURCES, new ItemRenderingLoader());
         MenuScreens.register(MegaShowdownMenuTypes.ZYGARDE_CUBE_MENU.get(), ZygardeCubeScreen::new);
+        MenuScreens.register(MegaShowdownMenuTypes.TERA_POUCH_MENU.get(), TeraPouchScreen::new);
+
         MegaShowdownClient.init();
 
         BlockRenderLayerMap.INSTANCE.putBlock(MegaShowdownBlocks.GRACIDEA_FLOWER.get(), RenderType.cutout());
