@@ -1273,15 +1273,15 @@ const Abilities = {
     num: 194
   },
   fairyaura: {
-	  onBeforeSwitchIn(pokemon) {
-        if (pokemon.species.id === "xerneas") {
-          pokemon.formeChange("xerneasactive", this.effect, true);
-        }
-	  },
+	  onPreStart(pokemon) {
+		if (pokemon.species.id === "xerneas") {
+          pokemon.formeChange("xerneasactive", false);
+        }	
+      },
       onStart(pokemon) {
         if (this.suppressingAbility(pokemon))
           return;
-        this.add("-ability", pokemon, "Fairy Aura");
+	    this.add("-ability", pokemon, "Fairy Aura");
       },
       onAnyBasePowerPriority: 20,
       onAnyBasePower(basePower, source, target, move) {
@@ -2934,6 +2934,11 @@ const Abilities = {
     onPreStart(pokemon) {
       this.add("-ability", pokemon, "Neutralizing Gas");
       pokemon.abilityState.ending = false;
+	  for (const target of this.getAllActive()) {
+		  if (target.species.id === "xerneas" && target.ability === "fairyaura" && !target.transformed) {
+			  target.formeChange("xerneasactive", false);
+		  }
+	  }
       const strongWeathers = ["desolateland", "primordialsea", "deltastream"];
       for (const target of this.getAllActive()) {
         if (target.hasItem("Ability Shield")) {
@@ -2953,6 +2958,11 @@ const Abilities = {
         if (strongWeathers.includes(target.getAbility().id)) {
           this.singleEvent("End", this.dex.abilities.get(target.getAbility().id), target.abilityState, target, pokemon, "neutralizinggas");
         }
+      }
+    },
+	onAnySwitchIn(target) {
+    if (target.species.id === "xerneas" && target.ability === "fairyaura" && !target.transformed) {
+        target.formeChange("xerneasactive", false);
       }
     },
     onEnd(source) {
