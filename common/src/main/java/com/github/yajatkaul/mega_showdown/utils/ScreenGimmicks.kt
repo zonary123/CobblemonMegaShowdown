@@ -24,22 +24,4 @@ object ScreenGimmicks {
             scale = scale
         )
     }
-
-    fun gimmikInfo(
-        matrices: PoseStack,
-        texture: ResourceLocation,
-        x: Number,
-        y: Number,
-        width: Number,
-        height: Number
-    ) {
-        blitk(
-            matrixStack = matrices,
-            texture = texture,
-            x = x,
-            y = y,
-            width = width,
-            height = height,
-        )
-    }
 }

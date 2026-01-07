@@ -43,25 +43,25 @@ public record SnowStormParticle(
     ).apply(instance, SnowStormParticle::new));
 
     public void apply(PokemonEntity context, List<String> aspects, PokemonEntity other) {
-        processTransformation(context, aspects, other, null, true);
+        processTransformation(context, aspects, other, null, true, false);
     }
 
     public void revert(PokemonEntity context, List<String> aspects, PokemonEntity other) {
-        processTransformation(context, aspects, other, null, false);
+        processTransformation(context, aspects, other, null, false, false);
     }
 
-    public void applyBattle(PokemonEntity context, List<String> aspects, PokemonEntity other, BattlePokemon battlePokemon, float battle_pause) {
+    public void applyBattle(PokemonEntity context, List<String> aspects, PokemonEntity other, BattlePokemon battlePokemon, float battle_pause, boolean loop) {
         battlePokemon.actor.getBattle().dispatchWaitingToFront(battle_pause, () -> Unit.INSTANCE);
-        processTransformation(context, aspects, other, battlePokemon, true);
+        processTransformation(context, aspects, other, battlePokemon, true, loop);
     }
 
     public void revertBattle(PokemonEntity context, List<String> aspects, PokemonEntity other, BattlePokemon battlePokemon, float battle_pause) {
         battlePokemon.actor.getBattle().dispatchWaitingToFront(battle_pause, () -> Unit.INSTANCE);
-        processTransformation(context, aspects, other, battlePokemon, false);
+        processTransformation(context, aspects, other, battlePokemon, false, false);
     }
 
     private void processTransformation(PokemonEntity context, List<String> aspects, PokemonEntity other,
-                                       BattlePokemon battlePokemon, boolean isApply) {
+                                       BattlePokemon battlePokemon, boolean isApply, boolean loop) {
         context.setNoAi(true);
 
         CompoundTag pokemonPersistentData = context.getPokemon().getPersistentData();
@@ -105,6 +105,10 @@ public record SnowStormParticle(
         );
         playSound(context, isApply);
 
+        if (loop) {
+            loopTera(context, particleId, sourceParticles.orElse(null), other, targetParticles.orElse(null), isApply);
+        }
+
         delay.ifPresentOrElse(
                 delayValue -> context.after(delayValue, () -> {
                     applyAspectsAndCleanup(context, aspects, pokemonPersistentData, battlePokemon);
@@ -112,6 +116,29 @@ public record SnowStormParticle(
                 }),
                 () -> applyAspectsAndCleanup(context, aspects, pokemonPersistentData, battlePokemon)
         );
+    }
+
+    public void loopTera(
+            PokemonEntity context,
+            ResourceLocation particleId,
+            List<String> sourceParticles,
+            PokemonEntity other,
+            List<String> targetParticles,
+            boolean isApply
+    ) {
+        if (!context.getPokemon().getPersistentData().getBoolean("is_tera")) {
+            return;
+        }
+
+        PokemonBehaviourHelper.Companion.snowStormPartileSpawner(
+                context, particleId, sourceParticles, other, targetParticles
+        );
+        playSound(context, isApply);
+
+        context.after(1f, () -> {
+            loopTera(context, particleId, sourceParticles, other, targetParticles, isApply);
+            return Unit.INSTANCE;
+        });
     }
 
     private void applyAspectsAndCleanup(PokemonEntity context, List<String> aspects,

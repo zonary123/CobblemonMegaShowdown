@@ -7,8 +7,8 @@
 				"texture_width": 256,
 				"texture_height": 256,
 				"visible_bounds_width": 6,
-				"visible_bounds_height": 10,
-				"visible_bounds_offset": [0, 0, 0]
+				"visible_bounds_height": 13,
+				"visible_bounds_offset": [0, -1.5, 0]
 			},
 			"bones": [
 				{
@@ -125,6 +125,29 @@
 					"cubes": [
 						{"origin": [-16, -83, -16], "size": [32, 48, 32], "uv": [0, 0]},
 						{"origin": [-16, -83, -16], "size": [32, 48, 32], "inflate": 1, "uv": [128, 176]}
+					]
+				},
+				{
+					"name": "crysta_12",
+					"parent": "total",
+					"pivot": [0, -59, 1],
+					"cubes": [
+						{"origin": [-32, -83, 1], "size": [32, 48, 32], "uv": [0, 0]},
+						{"origin": [-32, -131, 2], "size": [31, 48, 31], "inflate": 1, "uv": [129, 177]},
+						{"origin": [0, -131, 1], "size": [32, 48, 32], "uv": [0, 0]},
+						{"origin": [1, -131, 2], "size": [31, 48, 31], "inflate": 1, "uv": [130, 177]},
+						{"origin": [-32, -131, -31], "size": [32, 48, 32], "uv": [0, 0]},
+						{"origin": [-32, -131, -31], "size": [31, 48, 31], "inflate": 1, "uv": [129, 177]},
+						{"origin": [0, -131, -31], "size": [32, 48, 32], "uv": [0, 0]},
+						{"origin": [1, -131, -31], "size": [31, 48, 31], "inflate": 1, "uv": [130, 177]},
+						{"origin": [-32, -131, 1], "size": [32, 48, 32], "uv": [0, 0]},
+						{"origin": [1, -83, -31], "size": [31, 48, 31], "inflate": 1, "uv": [130, 177]},
+						{"origin": [0, -83, -31], "size": [32, 48, 32], "uv": [0, 0]},
+						{"origin": [-32, -83, -31], "size": [31, 48, 31], "inflate": 1, "uv": [129, 177]},
+						{"origin": [-32, -83, -31], "size": [32, 48, 32], "uv": [0, 0]},
+						{"origin": [1, -83, 2], "size": [31, 48, 31], "inflate": 1, "uv": [130, 177]},
+						{"origin": [0, -83, 1], "size": [32, 48, 32], "uv": [0, 0]},
+						{"origin": [-32, -83, 2], "size": [31, 48, 31], "inflate": 1, "uv": [129, 177]}
 					]
 				}
 			]

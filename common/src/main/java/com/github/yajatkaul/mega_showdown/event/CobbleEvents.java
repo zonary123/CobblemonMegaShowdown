@@ -319,16 +319,14 @@ public class CobbleEvents {
             }
         }
 
-        event.getBattle().dispatchWaitingToFront(3.5f, () -> {
-            PokemonBehaviourHelper.Companion.playAnimation(pokemonEntity, Set.of("cry"), List.of());
-            return Unit.INSTANCE;
-        });
+        event.getBattle().dispatchWaitingToFront(3.5f, () -> Unit.INSTANCE);
 
-        BlockPos entityPos = pokemonEntity.getOnPos();
-        pokemonEntity.level().playSound(
-                null, entityPos.getX(), entityPos.getY(), entityPos.getZ(),
-                MegaShowdownSounds.TERASTALLIZATION.get(),
-                SoundSource.PLAYERS, 0.2f, 0.8f
+        Effect.getEffect("mega_showdown:terastallization").applyEffectsBattleLoop(pokemon, List.of(), null, event.getPokemon());
+        AspectUtils.appendRevertDataPokemon(
+                Effect.getEffect("mega_showdown:terastallization"),
+                List.of(),
+                pokemon,
+                "battle_end_revert"
         );
     }
 

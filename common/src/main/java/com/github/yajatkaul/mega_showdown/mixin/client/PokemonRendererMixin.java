@@ -18,6 +18,7 @@ import com.github.yajatkaul.mega_showdown.codec.teraHat.HatCodec;
 import com.github.yajatkaul.mega_showdown.config.MegaShowdownConfig;
 import com.github.yajatkaul.mega_showdown.render.HatsDataLoader;
 import com.github.yajatkaul.mega_showdown.render.renderTypes.MSDRenderTypes;
+import com.github.yajatkaul.mega_showdown.utils.PokemonBehaviourHelper;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
@@ -61,9 +62,9 @@ public class PokemonRendererMixin {
     private final Set<String> mega_showdown$teraCrystalAspects = new HashSet<>();
 
     @Unique
-    private float mega_showdown$teraCrystalTime = 0f;
-    @Unique
     private boolean mega_showdown$teraCrystalPlayed = false;
+    @Unique
+    private boolean mega_showdown$teraCrystalPass = false;
 
     @Inject(method = "<init>", at = @At(value = "RETURN"))
     public void init(EntityRendererProvider.Context context, CallbackInfo ci) {
@@ -77,8 +78,10 @@ public class PokemonRendererMixin {
 
         Pokemon pokemon = entity.getPokemon();
         boolean tera_play = pokemon.getAspects().contains("play_tera");
+        Optional<String> aspect = pokemon.getAspects().stream()
+                .filter(a -> a.startsWith("msd:tera_")).findFirst();
 
-        if (tera_play && !mega_showdown$teraCrystalPlayed) {
+        if (tera_play && (!mega_showdown$teraCrystalPlayed || mega_showdown$teraCrystalPass) && aspect.isPresent()) {
             mega_showdown$renderTeraCrystals(
                     entity,
                     pokemon,
@@ -88,16 +91,25 @@ public class PokemonRendererMixin {
                     buffer,
                     packedLight
             );
-            ci.cancel();
-            return;
+            if (!mega_showdown$teraCrystalPass) {
+                ci.cancel();
+                return;
+            }
         }
 
-        Optional<String> aspect = pokemon.getAspects().stream()
-                .filter(a -> a.startsWith("msd:tera_")).findFirst();
         boolean dmax_aspect = pokemon.getAspects().contains("msd:dmax");
 
-        if (aspect.isPresent() && MegaShowdownConfig.teraHats) {
-            mega_showdown$renderTeraHats(aspect.get(), pokemon, clientDelegate, partialTicks, poseStack, buffer, packedLight);
+        if (aspect.isPresent()) {
+            if (MegaShowdownConfig.teraHats) {
+                mega_showdown$renderTeraHats(aspect.get(), pokemon, clientDelegate, partialTicks, poseStack, buffer, packedLight);
+            }
+            PokemonBehaviourHelper.Companion.snowStormPartileSpawner(
+                    entity,
+                    ResourceLocation.fromNamespaceAndPath("cobblemon", "tera_glitter"),
+                    List.of("root"),
+                    null,
+                    null
+            );
         }
 
         if (dmax_aspect) {
@@ -111,18 +123,20 @@ public class PokemonRendererMixin {
                 BedrockAnimationRepository.INSTANCE.getAnimation("terastal_transformation", "animation.terastal_transformation.transform")
         ).getDuration();
 
-        if (mega_showdown$teraCrystalTime >= mega_showdown$teraCrystalDuration) {
-            mega_showdown$teraCrystalTime = 0f;
+        if (mega_showdown$teraCrystalState.getAnimationSeconds() >= mega_showdown$teraCrystalDuration) {
             mega_showdown$teraCrystalPlayed = true;
+            mega_showdown$teraCrystalPass = false;
+            mega_showdown$teraCrystalState.resetAnimation();
             entity.after(3f, () -> {
                 mega_showdown$teraCrystalPlayed = false;
                 return Unit.INSTANCE;
             });
             return;
+        } else if (mega_showdown$teraCrystalState.getAnimationSeconds() >= mega_showdown$teraCrystalDuration - 0.3) {
+            mega_showdown$teraCrystalPass = true;
         }
 
         mega_showdown$teraCrystalState.setCurrentAspects(mega_showdown$teraCrystalAspects);
-        mega_showdown$teraCrystalTime += partialTicks / 20f;
         mega_showdown$teraCrystalState.updatePartialTicks(partialTicks);
 
         Map<String, MatrixWrapper> locatorStates = clientDelegate.getLocatorStates();
@@ -166,7 +180,7 @@ public class PokemonRendererMixin {
                 null,
                 mega_showdown$teraCrystalState,
                 0F, 0F, 0F, 0F,
-                mega_showdown$teraCrystalTime * 20
+                mega_showdown$teraCrystalState.getAnimationSeconds() * 20
         );
 
         // Render

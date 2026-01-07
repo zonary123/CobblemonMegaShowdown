@@ -24,6 +24,11 @@ public class TeraCrystalState extends PosableState {
         this.setCurrentPartialTicks(this.getCurrentPartialTicks() + partialTicks);
     }
 
+    public void resetAnimation() {
+        this.reset();
+        this.setCurrentPartialTicks(0);
+    }
+
     @Override
     public @NotNull SchedulingTracker getSchedulingTracker() {
         return schedulingTracker;
