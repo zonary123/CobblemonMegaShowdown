@@ -121,6 +121,9 @@ class Side {
       return false;
     if (this.battle.gameType === "multi" && this.battle.turn % 2 !== [1, 1, 0, 0][this.n])
       return false;
+    const active = this.active[0];
+    if (active && active.terastallized)
+		return false;
     return !this.dynamaxUsed;
   }
   getChoice() {

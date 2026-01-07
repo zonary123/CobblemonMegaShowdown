@@ -2,3 +2,4 @@
 - max mushroom now doesn't need light, earlier it was 9 light requirement
 - Tera implemented completely
 - Added dynamax clouds (earlier only gmax's had em)
+- Fixed Tera's being able to dynamax
