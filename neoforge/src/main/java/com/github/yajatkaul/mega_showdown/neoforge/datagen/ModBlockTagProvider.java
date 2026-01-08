@@ -1,5 +1,6 @@
 package com.github.yajatkaul.mega_showdown.neoforge.datagen;
 
+import com.cobblemon.mod.common.api.tags.CobblemonBlockTags;
 import com.github.yajatkaul.mega_showdown.MegaShowdown;
 import com.github.yajatkaul.mega_showdown.block.MegaShowdownBlocks;
 import com.github.yajatkaul.mega_showdown.tag.MegaShowdownTags;
@@ -70,6 +71,20 @@ public class ModBlockTagProvider extends BlockTagsProvider {
         tag(MegaShowdownTags.Blocks.POWER_SPOT)
                 .add(
                         MegaShowdownBlocks.POWER_SPOT.get()
+                );
+
+        tag(CobblemonBlockTags.EVOLUTION_STONE_BLOCKS)
+                .add(
+                        MegaShowdownBlocks.MEGA_METEORID_WATER_ORE.get(),
+                        MegaShowdownBlocks.MEGA_METEORID_DAWN_ORE.get(),
+                        MegaShowdownBlocks.MEGA_METEORID_DUSK_ORE.get(),
+                        MegaShowdownBlocks.MEGA_METEORID_FIRE_ORE.get(),
+                        MegaShowdownBlocks.MEGA_METEORID_ICE_ORE.get(),
+                        MegaShowdownBlocks.MEGA_METEORID_LEAF_ORE.get(),
+                        MegaShowdownBlocks.MEGA_METEORID_MOON_ORE.get(),
+                        MegaShowdownBlocks.MEGA_METEORID_SHINY_ORE.get(),
+                        MegaShowdownBlocks.MEGA_METEORID_SUN_ORE.get(),
+                        MegaShowdownBlocks.MEGA_METEORID_THUNDER_ORE.get()
                 );
     }
 }
