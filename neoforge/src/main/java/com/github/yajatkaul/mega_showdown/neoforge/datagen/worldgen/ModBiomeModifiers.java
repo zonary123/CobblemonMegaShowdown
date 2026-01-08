@@ -14,7 +14,6 @@ import net.neoforged.neoforge.registries.NeoForgeRegistries;
 
 public class ModBiomeModifiers {
     public static final ResourceKey<BiomeModifier> ADD_MAX_MUSHROOM = registerKey("add_max_mushroom");
-    public static final ResourceKey<BiomeModifier> ADD_GRACIDEA_FLOWER = registerKey("add_gracidea_flower");
 
     public static void bootstrap(BootstrapContext<BiomeModifier> context) {
         // CF -> PF -> BM

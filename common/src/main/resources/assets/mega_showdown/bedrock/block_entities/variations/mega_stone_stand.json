@@ -1,0 +1,13 @@
+{
+  "name": "mega_showdown:mega_stone_stand",
+  "order": 1,
+  "variations": [
+    {
+      "aspects": [],
+      "poser": "mega_showdown:mega_stone_stand",
+      "model": "mega_showdown:mega_stone_stand.geo",
+      "texture": "mega_showdown:textures/bedrock/block/mega_stone_stand.png",
+      "layers": []
+    }
+  ]
+}

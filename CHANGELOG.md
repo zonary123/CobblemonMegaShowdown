@@ -3,3 +3,4 @@
 - Tera implemented completely
 - Added dynamax clouds (earlier only gmax's had em)
 - Fixed Tera's being able to dynamax
+- Max mushroom's spawning is more rare now

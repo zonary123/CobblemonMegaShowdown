@@ -122,19 +122,13 @@ public class MegaShowdownBlocks {
     public static final RegistrySupplier<Block> MEGA_METEORID_THUNDER_ORE = registerMeteoroidOre("mega_meteorid_thunder_ore");
 
     public static final RegistrySupplier<Block> MEGA_STONE_CRYSTAL = registerBlock("mega_stone_crystal",
-            () -> new ParticleBlock(4,
-                    3,
-                    BlockBehaviour.Properties.of()
-                            .strength(1.5f)
-                            .sound(SoundType.MEDIUM_AMETHYST_BUD)
-                            .noOcclusion()
-                            .requiresCorrectToolForDrops()
-                            .pushReaction(PushReaction.IGNORE)
-                            .lightLevel((state) -> 15),
-                    true,
-                    Block.box(2, 0, 2, 14, 13, 14),
-                    ParticleTypes.END_ROD
-            ),
+            () -> new MegaStoneStand(BlockBehaviour.Properties.of()
+                    .strength(1.5f)
+                    .sound(SoundType.MEDIUM_AMETHYST_BUD)
+                    .noOcclusion()
+                    .requiresCorrectToolForDrops()
+                    .pushReaction(PushReaction.IGNORE)
+                    .lightLevel((state) -> 15)),
             MegaShowdownTabs.MEGA_TAB);
 
     public static final RegistrySupplier<Block> WISHING_STAR_CRYSTAL = registerBlock("wishing_star_crystal",

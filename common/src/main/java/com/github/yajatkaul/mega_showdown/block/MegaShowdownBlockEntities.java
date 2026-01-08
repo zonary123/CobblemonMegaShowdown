@@ -1,6 +1,7 @@
 package com.github.yajatkaul.mega_showdown.block;
 
 import com.github.yajatkaul.mega_showdown.MegaShowdown;
+import com.github.yajatkaul.mega_showdown.block.block_entity.MegaStoneStandEntity;
 import com.github.yajatkaul.mega_showdown.block.block_entity.PedestalBlockEntity;
 import com.github.yajatkaul.mega_showdown.block.block_entity.ReassemblyUnitBlockEntity;
 import dev.architectury.registry.registries.DeferredRegister;
@@ -23,5 +24,10 @@ public class MegaShowdownBlockEntities {
     public static final RegistrySupplier<BlockEntityType<PedestalBlockEntity>> PEDESTAL_BLOCK_ENTITY =
             BLOCK_ENTITIES.register("pedestal_block_entity", () ->
                     BlockEntityType.Builder.of(PedestalBlockEntity::new, MegaShowdownBlocks.PEDESTAL.get()).build(null)
+            );
+
+    public static final RegistrySupplier<BlockEntityType<MegaStoneStandEntity>> MEGA_STONE_STAND_BLOCK_ENTITY =
+            BLOCK_ENTITIES.register("mega_stone_stand_be", () ->
+                    BlockEntityType.Builder.of(MegaStoneStandEntity::new, MegaShowdownBlocks.MEGA_STONE_CRYSTAL.get()).build(null)
             );
 }

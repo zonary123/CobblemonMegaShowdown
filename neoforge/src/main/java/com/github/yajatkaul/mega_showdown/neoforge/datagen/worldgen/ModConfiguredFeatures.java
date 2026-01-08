@@ -5,6 +5,7 @@ import com.github.yajatkaul.mega_showdown.block.MegaShowdownBlocks;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.worldgen.BootstrapContext;
 import net.minecraft.data.worldgen.features.FeatureUtils;
+import net.minecraft.data.worldgen.placement.PlacementUtils;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Blocks;
@@ -12,6 +13,7 @@ import net.minecraft.world.level.block.SweetBerryBushBlock;
 import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
 import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.level.levelgen.feature.configurations.FeatureConfiguration;
+import net.minecraft.world.level.levelgen.feature.configurations.RandomPatchConfiguration;
 import net.minecraft.world.level.levelgen.feature.configurations.SimpleBlockConfiguration;
 import net.minecraft.world.level.levelgen.feature.stateproviders.BlockStateProvider;
 
@@ -19,18 +21,26 @@ import java.util.List;
 
 public class ModConfiguredFeatures {
     public static final ResourceKey<ConfiguredFeature<?, ?>> MAX_MUSHROOM_KEY = registerKey("max_mushroom");
-    public static final ResourceKey<ConfiguredFeature<?, ?>> GRACIDEA_FLOWER_KEY = registerKey("gracidea_flower");
 
     public static void bootstrap(BootstrapContext<ConfiguredFeature<?, ?>> context) {
 
         register(context, MAX_MUSHROOM_KEY, Feature.RANDOM_PATCH,
-                FeatureUtils.simplePatchConfiguration(
-                        Feature.SIMPLE_BLOCK,
-                        new SimpleBlockConfiguration(
-                                BlockStateProvider.simple(MegaShowdownBlocks.MAX_MUSHROOM.get()
-                                        .defaultBlockState().setValue(SweetBerryBushBlock.AGE, Integer.valueOf(3)))
-                        ), List.of(Blocks.MOSS_BLOCK)
-                ));
+                new RandomPatchConfiguration(
+                        3, // <- EXACTLY 3 placement attempts
+                        2, // xz spread
+                        1, // y spread
+                        PlacementUtils.onlyWhenEmpty(
+                                Feature.SIMPLE_BLOCK,
+                                new SimpleBlockConfiguration(
+                                        BlockStateProvider.simple(
+                                                MegaShowdownBlocks.MAX_MUSHROOM.get()
+                                                        .defaultBlockState()
+                                                        .setValue(SweetBerryBushBlock.AGE, 3)
+                                        )
+                                )
+                        )
+                )
+        );
     }
 
     public static ResourceKey<ConfiguredFeature<?, ?>> registerKey(String name) {

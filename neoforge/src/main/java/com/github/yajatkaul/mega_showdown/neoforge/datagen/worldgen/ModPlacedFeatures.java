@@ -13,7 +13,6 @@ import net.minecraft.world.level.levelgen.placement.*;
 import java.util.List;
 
 public class ModPlacedFeatures {
-
     public static final ResourceKey<PlacedFeature> MAX_MUSHROOM_PLACED_KEY = registerKey("max_mushroom_placed_key");
 
     public static void bootstrap(BootstrapContext<PlacedFeature> context) {
@@ -21,7 +20,8 @@ public class ModPlacedFeatures {
 
 
         register(context, MAX_MUSHROOM_PLACED_KEY, configuredFeatures.getOrThrow(ModConfiguredFeatures.MAX_MUSHROOM_KEY),
-                List.of(CountPlacement.of(3),
+                List.of(
+                        RarityFilter.onAverageOnceEvery(8),
                         InSquarePlacement.spread(),
                         HeightRangePlacement.uniform(VerticalAnchor.absolute(-59), VerticalAnchor.absolute(64)),
                         BiomeFilter.biome()));
