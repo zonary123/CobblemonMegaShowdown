@@ -477,7 +477,10 @@
 					"cubes": [
 						{"origin": [-6, 40.25, -35.5], "size": [12, 4, 9], "inflate": 0.01, "uv": [378, 0]},
 						{"origin": [-6, 44.25, -38.5], "size": [12, 8, 12], "inflate": 0.01, "uv": [144, 25]}
-					]
+					],
+					"locators": {
+						"head": [0, 52, -35]
+					}
 				},
 				{
 					"name": "head_rotation",

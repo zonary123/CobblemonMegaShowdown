@@ -40,6 +40,7 @@
 					],
 					"locators": {
 						"held_item_head": [0, 19, 0],
+						"head": [0, 19.4, 0],
 						"held_item_eyes": [0, 16, -4]
 					}
 				},

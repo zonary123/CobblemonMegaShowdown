@@ -70,7 +70,10 @@
 				{
 					"name": "head",
 					"parent": "neck",
-					"pivot": [0, 10.475, -3.525]
+					"pivot": [0, 10.475, -3.525],
+					"locators": {
+						"head": [0, 0, 0]
+					}
 				},
 				{
 					"name": "head2",

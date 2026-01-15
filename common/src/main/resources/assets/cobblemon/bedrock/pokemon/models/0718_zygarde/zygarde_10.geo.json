@@ -245,7 +245,10 @@
 					"name": "head",
 					"parent": "neck",
 					"pivot": [0, 29.02908, -7.26416],
-					"rotation": [-7.5, 0, 0]
+					"rotation": [-7.5, 0, 0],
+					"locators": {
+						"head": [0, 31.5, -10]
+					}
 				},
 				{
 					"name": "head_ai",
