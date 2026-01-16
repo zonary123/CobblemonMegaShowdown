@@ -22,6 +22,8 @@ const battleActions = require("./sim/battle-actions");
 const conditions = require("./data/mods/cobblemon/conditions");
 const typechart = require("./data/mods/cobblemon/typechart");
 const scripts = require("./data/mods/cobblemon/scripts");
+const moves = require("./data/mods/cobblemon/moves");
+const abilities = require("./data/mods/cobblemon/abilities");
 
 const battleMap = new Map();
 const toID = Dex.toID;
@@ -111,6 +113,11 @@ function receiveCustomGmaxMove(pokemonId, moveId) {
   battleActions.gmaxMap[pokemonId] = moveId;
 }
 
+function receiveNewTypeData(type, max, z) {
+    battleActions.MAX_MOVES[type] = max;
+    battleActions.Z_MOVES[type] = z;
+}
+
 function receiveConditionData(conditionId, conditionData) {
   conditions.Conditions[conditionId] = eval(`(${conditionData})`);
 }
@@ -127,4 +134,13 @@ function receiveScriptData(scriptId, scriptData) {
 
 function receiveHeldItemData(itemId, itemData) {
   items.Items[itemId] = eval(`(${itemData})`);
+}
+
+function receiveMoveData(moveId, moveData) {
+  moves.Moves[moveId] = eval(`(${moveData})`);
+  return JSON.stringify(moves.Moves[moveId]);
+}
+
+function receiveAbilityData(abilityId, abilityData) {
+  abilities.Abilities[abilityId] = eval(`(${abilityData})`);
 }
