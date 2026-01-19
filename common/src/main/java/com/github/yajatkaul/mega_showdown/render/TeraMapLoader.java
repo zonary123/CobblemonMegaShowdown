@@ -15,12 +15,14 @@ import net.minecraft.util.profiling.ProfilerFiller;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.InputStreamReader;
-import java.util.*;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 
 public class TeraMapLoader implements ResourceManagerReloadListener {
-    public static final HashMap<String, ShaderInstance> REGISTRY = new HashMap<>();
+    public static final HashMap<String, String> REGISTRY = new HashMap<>();
     private static final String DIRECTORY = "mega_showdown/tera_map";
 
     public record TeraMap(Map<String, String> colorMap) {
@@ -44,9 +46,7 @@ public class TeraMapLoader implements ResourceManagerReloadListener {
                         JsonParser.parseReader(new InputStreamReader(stream))
                 ).result().orElseThrow();
 
-                for (Map.Entry<String, String> entrySet : codec.colorMap.entrySet()) {
-                    REGISTRY.put(entrySet.getKey(), getColorShaderMap().get(entrySet.getValue()));
-                }
+                REGISTRY.putAll(codec.colorMap);
             } catch (Exception e) {
                 MegaShowdown.LOGGER.error("Failed loading tera map JSON: {}", id, e);
             }
@@ -71,30 +71,31 @@ public class TeraMapLoader implements ResourceManagerReloadListener {
         return "mega_showdown";
     }
 
-    private static final Map<String, ShaderInstance> COLOR_SHADER_MAP = new HashMap<>();
-
-    private static Map<String, ShaderInstance> getColorShaderMap() {
-        if (COLOR_SHADER_MAP.isEmpty()) {
-            COLOR_SHADER_MAP.put("red", MSDRenderTypes.teraFire);
-            COLOR_SHADER_MAP.put("blue", MSDRenderTypes.teraWater);
-            COLOR_SHADER_MAP.put("green", MSDRenderTypes.teraGrass);
-            COLOR_SHADER_MAP.put("yellow", MSDRenderTypes.teraElectric);
-            COLOR_SHADER_MAP.put("brown", MSDRenderTypes.teraGround);
-            COLOR_SHADER_MAP.put("light_blue", MSDRenderTypes.teraFlying);
-            COLOR_SHADER_MAP.put("purple", MSDRenderTypes.teraDragon);
-            COLOR_SHADER_MAP.put("pink", MSDRenderTypes.teraFairy);
-            COLOR_SHADER_MAP.put("black", MSDRenderTypes.teraDark);
-            COLOR_SHADER_MAP.put("gray", MSDRenderTypes.teraSteel);
-            COLOR_SHADER_MAP.put("light_grey", MSDRenderTypes.teraIce);
-            COLOR_SHADER_MAP.put("orange", MSDRenderTypes.teraFighting);
-            COLOR_SHADER_MAP.put("lime", MSDRenderTypes.teraBug);
-            COLOR_SHADER_MAP.put("teal", MSDRenderTypes.teraPoison);
-            COLOR_SHADER_MAP.put("indigo", MSDRenderTypes.teraGhost);
-            COLOR_SHADER_MAP.put("magenta", MSDRenderTypes.teraPsychic);
-            COLOR_SHADER_MAP.put("tan", MSDRenderTypes.teraRock);
-            COLOR_SHADER_MAP.put("navy", MSDRenderTypes.teraNormal);
-            COLOR_SHADER_MAP.put("white", MSDRenderTypes.teraStellar);
-        }
-        return COLOR_SHADER_MAP;
+    public static ShaderInstance getColorShaderMap(String color) {
+        return switch (color) {
+            case "red" -> MSDRenderTypes.teraFire;
+            case "blue" -> MSDRenderTypes.teraWater;
+            case "green" -> MSDRenderTypes.teraGrass;
+            case "yellow" -> MSDRenderTypes.teraElectric;
+            case "brown" -> MSDRenderTypes.teraGround;
+            case "light_blue" -> MSDRenderTypes.teraFlying;
+            case "purple" -> MSDRenderTypes.teraDragon;
+            case "pink" -> MSDRenderTypes.teraFairy;
+            case "black" -> MSDRenderTypes.teraDark;
+            case "gray" -> MSDRenderTypes.teraSteel;
+            case "light_grey" -> MSDRenderTypes.teraIce;
+            case "orange" -> MSDRenderTypes.teraFighting;
+            case "lime" -> MSDRenderTypes.teraBug;
+            case "teal" -> MSDRenderTypes.teraPoison;
+            case "indigo" -> MSDRenderTypes.teraGhost;
+            case "magenta" -> MSDRenderTypes.teraPsychic;
+            case "tan" -> MSDRenderTypes.teraRock;
+            case "navy" -> MSDRenderTypes.teraNormal;
+            case "white" -> MSDRenderTypes.teraStellar;
+            default -> {
+                MegaShowdown.LOGGER.error("Unknown tera shader color '{}'", color);
+                yield MSDRenderTypes.teraStellar;
+            }
+        };
     }
 }

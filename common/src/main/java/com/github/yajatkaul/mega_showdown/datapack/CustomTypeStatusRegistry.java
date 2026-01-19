@@ -113,7 +113,9 @@ public class CustomTypeStatusRegistry implements JsonDataRegistry<CustomTypeStat
             int minDur,
             int maxDur,
             DamageStatusData damageStatusData
-    ) { }
+    ) {
+    }
 
-    public record DamageStatusData(int chance, double damagePercent, String healingAbility) { }
+    public record DamageStatusData(int chance, double damagePercent, String healingAbility) {
+    }
 }

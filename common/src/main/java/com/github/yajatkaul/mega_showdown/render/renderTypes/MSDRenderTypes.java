@@ -39,7 +39,7 @@ public class MSDRenderTypes {
                 false,
                 RenderType.CompositeState.builder()
                         .setShaderState(new RenderStateShard.ShaderStateShard(
-                                () -> TeraMapLoader.REGISTRY.get(tera_aspect))
+                                () -> TeraMapLoader.getColorShaderMap(TeraMapLoader.REGISTRY.get(tera_aspect)))
                         )
                         .setTextureState(new RenderStateShard.TextureStateShard(texture, false, false))
                         .setTransparencyState(RenderType.TRANSLUCENT_TRANSPARENCY)
