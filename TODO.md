@@ -1,8 +1,6 @@
 # TODO
 - Dynamax first get in pokeball then throw
-- fix shader names
-- work on dynamic battle gui
-- make rayquaza type shii datapackable
+- work on move templates type change when needed
 
 # Future
 - Make custom weather datapackable

@@ -2,7 +2,6 @@ package com.github.yajatkaul.mega_showdown.gimmick.codec;
 
 import com.cobblemon.mod.common.api.moves.Move;
 import com.cobblemon.mod.common.pokemon.Pokemon;
-import com.github.yajatkaul.mega_showdown.MegaShowdown;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
@@ -48,7 +47,7 @@ public record Conditions(
         }
     }
 
-    public record Abilities (
+    public record Abilities(
             List<String> required_abilities,
             List<String> blacklist_abilities
     ) {
