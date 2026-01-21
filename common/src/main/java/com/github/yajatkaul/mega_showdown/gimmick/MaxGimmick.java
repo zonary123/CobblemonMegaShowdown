@@ -1,7 +1,7 @@
 package com.github.yajatkaul.mega_showdown.gimmick;
 
 import com.cobblemon.mod.common.pokemon.Pokemon;
-import com.github.yajatkaul.mega_showdown.gimmick.codec.AspectSetCodec;
+import com.github.yajatkaul.mega_showdown.codec.AspectConditions;
 import com.github.yajatkaul.mega_showdown.utils.GlowHandler;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -15,12 +15,12 @@ import java.util.Map;
 public record MaxGimmick(
         String pokemonShowdownId,
         String gmaxMove,
-        AspectSetCodec aspectSetCodec
+        AspectConditions aspectConditions
 ) {
     public static final Codec<MaxGimmick> CODEC = RecordCodecBuilder.create(instance -> instance.group(
             Codec.STRING.fieldOf("pokemon_showdown_id").forGetter(MaxGimmick::pokemonShowdownId),
             Codec.STRING.fieldOf("gmax_move").forGetter(MaxGimmick::gmaxMove),
-            AspectSetCodec.CODEC.fieldOf("aspect_conditions").forGetter(MaxGimmick::aspectSetCodec)
+            AspectConditions.CODEC.optionalFieldOf("aspect_conditions", AspectConditions.DEFAULT()).forGetter(MaxGimmick::aspectConditions)
     ).apply(instance, MaxGimmick::new));
     private static final Map<Pokemon, ScalingData> ACTIVE_SCALING_ANIMATIONS = new HashMap<>();
     private static final int DEFAULT_SCALING_DURATION = 60;
@@ -55,20 +55,20 @@ public record MaxGimmick(
 
         while (iterator.hasNext()) {
             Map.Entry<Pokemon, ScalingData> entry = iterator.next();
-            Pokemon entity = entry.getKey();
+            Pokemon pokemon = entry.getKey();
             ScalingData data = entry.getValue();
             data.currentTick++;
 
-            if (entity.getEntity() == null) {
+            if (pokemon.getEntity() == null) {
                 iterator.remove();
-                entity.setScaleModifier(entity.getPersistentData().getFloat("orignal_size"));
+                pokemon.setScaleModifier(pokemon.getPersistentData().getFloat("orignal_size"));
                 continue;
             }
 
             float progress = Math.min(1.0f, (float) data.currentTick / data.durationTicks);
             float newScale = data.startScale + (data.targetScale - data.startScale) * progress;
 
-            entity.setScaleModifier(newScale);
+            pokemon.setScaleModifier(newScale);
 
             if (data.currentTick >= data.durationTicks) {
                 iterator.remove();

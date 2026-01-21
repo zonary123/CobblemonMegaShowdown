@@ -24,7 +24,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 public class Conditions implements DataRegistry {
-    private static final ResourceLocation ID = ResourceLocation.fromNamespaceAndPath(MegaShowdown.MOD_ID, "showdown/conditions");
+    private static final ResourceLocation ID = ResourceLocation.fromNamespaceAndPath(MegaShowdown.MOD_ID, "mega_showdown/showdown/conditions");
     private static final SimpleObservable<Conditions> OBSERVABLE = new SimpleObservable<>();
     private final Map<String, String> conditionScripts = new HashMap<>();
     public static final Conditions INSTANCE = new Conditions();
@@ -72,7 +72,7 @@ public class Conditions implements DataRegistry {
     @Override
     public void reload(@NotNull ResourceManager resourceManager) {
         conditionScripts.clear();
-        resourceManager.listResources("showdown/conditions", path -> path.getPath().endsWith(".js")).forEach((id, resource) -> {
+        resourceManager.listResources("mega_showdown/showdown/conditions", path -> path.getPath().endsWith(".js")).forEach((id, resource) -> {
             try (BufferedReader reader = new BufferedReader(new InputStreamReader(resource.open(), StandardCharsets.UTF_8))) {
                 String js = reader.lines().collect(Collectors.joining("\n"));
                 String conditionId = new File(id.getPath()).getName().replace(".js", "");

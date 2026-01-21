@@ -11,12 +11,13 @@ import com.cobblemon.mod.common.client.render.pokemon.PokemonRenderer;
 import com.cobblemon.mod.common.entity.pokemon.PokemonEntity;
 import com.cobblemon.mod.common.pokemon.Pokemon;
 import com.github.yajatkaul.mega_showdown.MegaShowdown;
-import com.github.yajatkaul.mega_showdown.codec.teraHat.LayerCodec;
+import com.github.yajatkaul.mega_showdown.codec.sizer.LayerCodec;
 import com.github.yajatkaul.mega_showdown.config.MegaShowdownConfig;
 import com.github.yajatkaul.mega_showdown.render.LayerDataLoader;
 import com.github.yajatkaul.mega_showdown.render.layerEntities.DynamaxCloudsLayer;
 import com.github.yajatkaul.mega_showdown.render.layerEntities.TeraHatsLayer;
 import com.github.yajatkaul.mega_showdown.render.layerEntities.states.TeraCrystalState;
+import com.github.yajatkaul.mega_showdown.utils.duck.cobblemon.interfaces.PokemonEntityDuck;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
@@ -52,18 +53,7 @@ public class PokemonRendererMixin {
     @Unique
     private final ResourceLocation mega_showdown$teraCrystalPoserId = ResourceLocation.fromNamespaceAndPath("cobblemon", "terastal_transformation");
     @Unique
-    public final TeraCrystalState mega_showdown$teraCrystalState = new TeraCrystalState();
-    @Unique
     private final Set<String> mega_showdown$teraCrystalAspects = new HashSet<>();
-    @Unique
-    private boolean mega_showdown$teraCrystalPlayed = false;
-    @Unique
-    private boolean mega_showdown$teraCrystalPass = false;
-    //Timershit
-    @Unique
-    private double mega_showdown$animCrystalSeconds = 0.0;
-    @Unique
-    private long mega_showdown$lastCrystalTimeNs = -1L;
     //
 
     @Inject(method = "<init>", at = @At(value = "RETURN"))
@@ -81,7 +71,9 @@ public class PokemonRendererMixin {
         Optional<String> aspect = pokemon.getAspects().stream()
                 .filter(a -> a.startsWith("msd:tera_")).findFirst();
 
-        if (tera_play && (!mega_showdown$teraCrystalPlayed || mega_showdown$teraCrystalPass) && aspect.isPresent()) {
+        boolean mega_showdown$teraCrystalPlayed = ((PokemonEntityDuck) entity).mega_showdown$isTeraCrystalPlayed();
+        boolean mega_showdown$teraCrystalPass = ((PokemonEntityDuck) entity).mega_showdown$isTeraCrystalPass();
+        if (tera_play && (!mega_showdown$teraCrystalPlayed || mega_showdown$teraCrystalPass)) {
             mega_showdown$renderTeraCrystals(
                     entity,
                     pokemon,
@@ -110,36 +102,42 @@ public class PokemonRendererMixin {
 
     @Unique
     private void mega_showdown$renderTeraCrystals(PokemonEntity entity, Pokemon pokemon, PokemonClientDelegate clientDelegate, PoseStack poseStack, MultiBufferSource buffer, int packedLight) {
+        PokemonEntityDuck duck = ((PokemonEntityDuck) entity);
+        long mega_showdown$lastCrystalTimeNs = duck.mega_showdown$getLastCrystalTimeNs();
+        double mega_showdown$animCrystalSeconds = duck.mega_showdown$getAnimCrystalSeconds();
+
         if (!Minecraft.getInstance().isPaused()) {
             long now = System.nanoTime();
 
             if (mega_showdown$lastCrystalTimeNs != -1L) {
                 double deltaSeconds = (now - mega_showdown$lastCrystalTimeNs) / 1_000_000_000.0;
-                mega_showdown$animCrystalSeconds += deltaSeconds;
+                duck.mega_showdown$setAnimCrystalSeconds(mega_showdown$animCrystalSeconds + deltaSeconds);
             }
 
-            mega_showdown$lastCrystalTimeNs = now;
+            duck.mega_showdown$setLastCrystalTimeNs(now);
         } else {
-            mega_showdown$lastCrystalTimeNs = System.nanoTime();
+            duck.mega_showdown$setLastCrystalTimeNs(System.nanoTime());
         }
 
         float mega_showdown$teraCrystalDuration = new BedrockActiveAnimation(
                 BedrockAnimationRepository.INSTANCE.getAnimation("terastal_transformation", "animation.terastal_transformation.transform")
         ).getDuration();
 
+        TeraCrystalState mega_showdown$teraCrystalState = ((PokemonEntityDuck) entity).mega_showdown$getTeraCrystalState();
+
         if (mega_showdown$teraCrystalState.getAnimationSeconds() >= mega_showdown$teraCrystalDuration) {
-            mega_showdown$teraCrystalPlayed = true;
-            mega_showdown$teraCrystalPass = false;
-            mega_showdown$animCrystalSeconds = 0.0;
-            mega_showdown$lastCrystalTimeNs = -1L;
+            duck.mega_showdown$setTeraCrystalPlayed(true);
+            duck.mega_showdown$setTeraCrystalPass(false);
+            duck.mega_showdown$setAnimCrystalSeconds(0.0);
+            duck.mega_showdown$setLastCrystalTimeNs(-1L);
             mega_showdown$teraCrystalState.resetAnimation();
             entity.after(3f, () -> {
-                mega_showdown$teraCrystalPlayed = false;
+                duck.mega_showdown$setTeraCrystalPlayed(false);
                 return Unit.INSTANCE;
             });
             return;
         } else if (mega_showdown$teraCrystalState.getAnimationSeconds() >= mega_showdown$teraCrystalDuration - 0.3) {
-            mega_showdown$teraCrystalPass = true;
+            duck.mega_showdown$setTeraCrystalPass(true);
         }
 
         float ticks = (float) (mega_showdown$animCrystalSeconds * 20f);
@@ -157,8 +155,6 @@ public class PokemonRendererMixin {
 
         if (rootLocator == null) return;
 
-        LayerCodec crystalSize = LayerDataLoader.REGISTRY.get(ResourceLocation.fromNamespaceAndPath(MegaShowdown.MOD_ID, pokemon.getSpecies().getName().toLowerCase(Locale.ROOT)));
-
         // Get model and texture
         PosableModel model = VaryingModelRepository.INSTANCE.getPoser(mega_showdown$teraCrystalPoserId, mega_showdown$teraCrystalState);
         model.context = mega_showdown$context;
@@ -174,6 +170,8 @@ public class PokemonRendererMixin {
         mega_showdown$context.put(RenderContext.Companion.getSPECIES(), mega_showdown$teraCrystalPoserId);
         mega_showdown$context.put(RenderContext.Companion.getPOSABLE_STATE(), mega_showdown$teraCrystalState);
 
+        LayerCodec.Settings settings = LayerDataLoader.getSettings(pokemon,"msd:tera_crystal");
+
         poseStack.pushPose();
 
         poseStack.mulPose(rootLocator.getMatrix());
@@ -181,10 +179,15 @@ public class PokemonRendererMixin {
         poseStack.mulPose(Axis.YP.rotationDegrees(180));
         poseStack.translate(0.08, 0.0, 0.0);
 
+        if (settings != null) {
+            List<Float> translate = settings.translate();
+            poseStack.translate(translate.get(0), translate.get(1), translate.get(2));
+        }
+
         poseStack.scale(1.5f, 1.5f, 1.5f);
 
-        if (crystalSize != null) {
-            List<Float> scale = LayerCodec.getScaleForHat(pokemon, "msd:tera_crystal", crystalSize);
+        if (settings != null) {
+            List<Float> scale = settings.scale();
             poseStack.scale(scale.get(0), scale.get(1), scale.get(2));
         }
 

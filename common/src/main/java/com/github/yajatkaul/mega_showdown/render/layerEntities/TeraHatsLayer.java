@@ -7,8 +7,7 @@ import com.cobblemon.mod.common.client.render.models.blockbench.repository.Rende
 import com.cobblemon.mod.common.client.render.models.blockbench.repository.VaryingModelRepository;
 import com.cobblemon.mod.common.entity.pokemon.PokemonEntity;
 import com.cobblemon.mod.common.pokemon.Pokemon;
-import com.github.yajatkaul.mega_showdown.MegaShowdown;
-import com.github.yajatkaul.mega_showdown.codec.teraHat.LayerCodec;
+import com.github.yajatkaul.mega_showdown.codec.sizer.LayerCodec;
 import com.github.yajatkaul.mega_showdown.config.MegaShowdownConfig;
 import com.github.yajatkaul.mega_showdown.render.LayerDataLoader;
 import com.github.yajatkaul.mega_showdown.render.layerEntities.states.TeraHatState;
@@ -22,11 +21,12 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
 
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public class TeraHatsLayer extends LayerEntity {
     private final ResourceLocation poserId = ResourceLocation.fromNamespaceAndPath("cobblemon", "tera_hat");
-    private final Set<String> aspects = new HashSet<>();
 
     public TeraHatsLayer() {
         super(new TeraHatState());
@@ -37,28 +37,11 @@ public class TeraHatsLayer extends LayerEntity {
         if (pokemon.getSpecies().getName().equals("Terapagos")) return;
 
         super.render(context, clientDelegate, entity, pokemon, entityYaw, poseStack, buffer, packedLight);
+        state.setCurrentAspects(Set.of(aspect));
 
         Map<String, MatrixWrapper> locatorStates = clientDelegate.getLocatorStates();
         MatrixWrapper headLocator = locatorStates.get("head");
         if (headLocator == null) return;
-
-        poseStack.pushPose();
-
-        LayerCodec teraHatCodec = LayerDataLoader.REGISTRY.get(ResourceLocation.fromNamespaceAndPath(MegaShowdown.MOD_ID, pokemon.getSpecies().getName().toLowerCase(Locale.ROOT)));
-
-        poseStack.mulPose(headLocator.getMatrix());
-        poseStack.mulPose(Axis.XP.rotationDegrees(180));
-        poseStack.mulPose(Axis.YP.rotationDegrees(180));
-
-        if (teraHatCodec != null) {
-            List<Float> scale = LayerCodec.getScaleForHat(pokemon, aspect, teraHatCodec);
-            poseStack.scale(scale.get(0), scale.get(1), scale.get(2));
-        }
-
-        // Update state BEFORE getting model
-        aspects.clear(); // Clear and re-add
-        aspects.add(aspect);
-        state.setCurrentAspects(aspects);
 
         // Get model and texture
         PosableModel model = VaryingModelRepository.INSTANCE.getPoser(poserId, state);
@@ -69,10 +52,28 @@ public class TeraHatsLayer extends LayerEntity {
         state.setCurrentModel(model);
 
         // Setup context
-        context.put(RenderContext.Companion.getASPECTS(), aspects);
+        context.put(RenderContext.Companion.getASPECTS(), Set.of(aspect));
         context.put(RenderContext.Companion.getTEXTURE(), texture);
         context.put(RenderContext.Companion.getSPECIES(), poserId);
         context.put(RenderContext.Companion.getPOSABLE_STATE(), state);
+
+        LayerCodec.Settings settings = LayerDataLoader.getSettings(pokemon,aspect);
+
+        poseStack.pushPose();
+
+        poseStack.mulPose(headLocator.getMatrix());
+        poseStack.mulPose(Axis.XP.rotationDegrees(180));
+        poseStack.mulPose(Axis.YP.rotationDegrees(180));
+
+        if (settings != null) {
+            List<Float> translate = settings.translate();
+            poseStack.translate(translate.get(0), translate.get(1), translate.get(2));
+        }
+
+        if (settings != null) {
+            List<Float> scale = settings.scale();
+            poseStack.scale(scale.get(0), scale.get(1), scale.get(2));
+        }
 
         // Apply animations
         model.applyAnimations(
@@ -90,7 +91,7 @@ public class TeraHatsLayer extends LayerEntity {
         if (MegaShowdownConfig.legacyTeraEffect) {
             vertexConsumer = buffer.getBuffer(RenderType.entityCutout(texture));
         } else {
-            vertexConsumer = buffer.getBuffer(MSDRenderTypes.pokemonShader(texture));
+            vertexConsumer = buffer.getBuffer(MSDRenderTypes.pokemonShader(texture, aspect));
         }
 
         model.render(context, poseStack, vertexConsumer, packedLight, OverlayTexture.NO_OVERLAY, -0x1);
@@ -105,7 +106,6 @@ public class TeraHatsLayer extends LayerEntity {
                 }
         );
         model.setDefault();
-
         poseStack.popPose();
     }
 }

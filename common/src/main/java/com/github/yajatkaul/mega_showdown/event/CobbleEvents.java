@@ -35,6 +35,7 @@ import com.github.yajatkaul.mega_showdown.codec.BattleFormChange;
 import com.github.yajatkaul.mega_showdown.codec.Effect;
 import com.github.yajatkaul.mega_showdown.codec.HeldItemFormChange;
 import com.github.yajatkaul.mega_showdown.codec.ZCrystal;
+import com.github.yajatkaul.mega_showdown.components.MegaShowdownDataComponents;
 import com.github.yajatkaul.mega_showdown.config.MegaShowdownConfig;
 import com.github.yajatkaul.mega_showdown.datapack.MegaShowdownDatapackRegister;
 import com.github.yajatkaul.mega_showdown.gimmick.MaxGimmick;
@@ -42,6 +43,7 @@ import com.github.yajatkaul.mega_showdown.gimmick.MegaGimmick;
 import com.github.yajatkaul.mega_showdown.gimmick.UltraGimmick;
 import com.github.yajatkaul.mega_showdown.item.MegaShowdownItems;
 import com.github.yajatkaul.mega_showdown.item.custom.form_change.FormChangeHeldItem;
+import com.github.yajatkaul.mega_showdown.item.custom.tera.CustomTeraShard;
 import com.github.yajatkaul.mega_showdown.sound.MegaShowdownSounds;
 import com.github.yajatkaul.mega_showdown.tag.MegaShowdownTags;
 import com.github.yajatkaul.mega_showdown.utils.*;
@@ -51,6 +53,7 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 
@@ -92,22 +95,30 @@ public class CobbleEvents {
                 || formeChangeEvent.getFormeName().equals("mega")) {
             return;
         }
-        BattlePokemon battlePokemon = formeChangeEvent.getPokemon();
+
         Pokemon pokemon = formeChangeEvent.getPokemon().getEffectedPokemon();
+
+        if (pokemon.getSpecies().getName().equals("Greninja") && formeChangeEvent.getFormeName().equals("ash")) {
+            AdvancementHelper.grantAdvancement(pokemon.getOwnerPlayer(), "bond/ash_greninja");
+        } else if (pokemon.getSpecies().getName().equals("Greninja") && pokemon.getAspects().contains("bond")) {
+            AdvancementHelper.grantAdvancement(pokemon.getOwnerPlayer(), "bond/ash_battle_bond");
+        }
+
+        BattlePokemon battlePokemon = formeChangeEvent.getPokemon();
 
         for (BattleFormChange battleFormChange : MegaShowdownDatapackRegister.BATTLE_FORM_CHANGE_REGISTRY) {
             if (formeChangeEvent.getFormeName().equals(battleFormChange.showdownFormChangeId())
                     && battleFormChange.pokemons().contains(pokemon.getSpecies().getName())
                     && battleFormChange.aspects().validate_apply(pokemon)) {
                 Effect.getEffect(battleFormChange.effect()).applyEffectsBattle(pokemon,
-                        battleFormChange.aspects().apply_aspects(),
+                        battleFormChange.aspects().aspectApply().aspects(),
                         null,
                         battlePokemon
                 );
 
                 AspectUtils.appendRevertDataPokemon(
                         Effect.getEffect(battleFormChange.effect()),
-                        battleFormChange.aspects().revert_aspects(),
+                        battleFormChange.aspects().aspectRevert().aspects(),
                         pokemon,
                         "battle_end_revert"
                 );
@@ -123,17 +134,28 @@ public class CobbleEvents {
 
         if (event.getEntity() instanceof PokemonEntity pokemonEntity) {
             Pokemon pokemon = pokemonEntity.getPokemon();
-            Item correspondingTeraShard = TeraHelper.getTeraShardForType(pokemon.getTypes());
+            Item correspondingTeraShard = TeraHelper.getTeraShardForType(pokemon.getPrimaryType());
+
             ItemDropEntry teraShardDropEntry = new ItemDropEntry();
             teraShardDropEntry.setItem(BuiltInRegistries.ITEM.getKey(correspondingTeraShard));
 
             Random random = new Random();
 
             boolean otherSuccess = MegaShowdownConfig.teraShardDropRate > 0 && random.nextDouble() < (MegaShowdownConfig.teraShardDropRate / 100.0);
-            boolean stellarSuccess = MegaShowdownConfig.stellarShardDropRate > 0 && random.nextDouble() < (MegaShowdownConfig.stellarShardDropRate / 100.0);;
+            boolean stellarSuccess = MegaShowdownConfig.stellarShardDropRate > 0 && random.nextDouble() < (MegaShowdownConfig.stellarShardDropRate / 100.0);
 
             if (otherSuccess) {
-                event.getDrops().add(teraShardDropEntry);
+                ItemStack stack = new ItemStack(correspondingTeraShard);
+                if (correspondingTeraShard instanceof CustomTeraShard) {
+                    stack.set(MegaShowdownDataComponents.TERA_TYPE.get(), pokemon.getTeraType());
+                }
+                ItemEntity itemEntity = new ItemEntity(
+                        pokemonEntity.level(),
+                        pokemonEntity.getX(), pokemonEntity.getY(), pokemonEntity.getZ(),
+                        stack
+                );
+
+                pokemonEntity.level().addFreshEntity(itemEntity);
             } else if (stellarSuccess) {
                 teraShardDropEntry.setItem(BuiltInRegistries.ITEM.getKey(MegaShowdownItems.STELLAR_TERA_SHARD.get()));
                 event.getDrops().add(teraShardDropEntry);
@@ -154,7 +176,7 @@ public class CobbleEvents {
             } else if (pokemon.getAspects().contains("cornerstone-mask")) {
                 pokemon.setTeraType(TeraTypes.getROCK());
             } else {
-                pokemon.setTeraType(TeraHelper.getTeraFromElement(pokemon.getPrimaryType()));
+                pokemon.setTeraType(TeraTypes.forElementalType(pokemon.getPrimaryType()));
             }
         } else if (pokemon.getSpecies().getName().equals("Terapagos")) {
             pokemon.setTeraType(TeraTypes.getSTELLAR());
@@ -171,7 +193,7 @@ public class CobbleEvents {
         PokemonEntity pokemon = event.getPokemonEntity();
 
         if (pokemon.getPokemon().getPersistentData().getBoolean("is_tera") && MegaShowdownConfig.legacyTeraEffect) {
-            GlowHandler.applyTeraGlow(pokemon);
+            GlowHandler.applyTeraGlow(pokemon, "msd:tera_" + pokemon.getPokemon().getTeraType().showdownId());
         }
     }
 
@@ -230,8 +252,10 @@ public class CobbleEvents {
 
     private static void dynamaxStarted(PokemonBattle battle, BattlePokemon battlePokemon, Boolean gmax) {
         Pokemon pokemon = battlePokemon.getEffectedPokemon();
+        AdvancementHelper.grantAdvancement(pokemon.getOwnerPlayer(), "dynamax/dynamax");
 
         if (gmax) {
+            AdvancementHelper.grantAdvancement(pokemon.getOwnerPlayer(), "dynamax/gigantamax");
             Effect.getEffect("mega_showdown:dynamax").applyEffectsBattle(pokemon, List.of("dynamax_form=gmax"), null, battlePokemon);
             AspectUtils.appendRevertDataPokemon(
                     Effect.empty(),
@@ -295,7 +319,10 @@ public class CobbleEvents {
 
         Effect.getEffect("mega_showdown:tera_init_" + pokemon.getTeraType().showdownId().toLowerCase(Locale.ROOT)).applyEffectsBattle(pokemon, List.of(), null, event.getPokemon());
 
-        AspectPropertyType.INSTANCE.fromString("msd:tera_" + pokemon.getTeraType().showdownId()).apply(pokemon);
+        pokemonEntity.after(1.5f, () -> {
+            AspectPropertyType.INSTANCE.fromString("msd:tera_" + pokemon.getTeraType().showdownId()).apply(pokemon);
+            return Unit.INSTANCE;
+        });
         AdvancementHelper.grantAdvancement(pokemon.getOwnerPlayer(), "tera/terastallized");
 
         AspectPropertyType.INSTANCE.fromString("play_tera").apply(pokemon);
@@ -307,7 +334,7 @@ public class CobbleEvents {
 
         pokemon.getPersistentData().putBoolean("is_tera", true);
         if (MegaShowdownConfig.legacyTeraEffect) {
-            GlowHandler.applyTeraGlow(pokemonEntity);
+            GlowHandler.applyTeraGlow(pokemonEntity, "msd:tera_" + pokemon.getTeraType().showdownId());
         }
 
         ServerPlayer player = pokemon.getOwnerPlayer();
@@ -347,6 +374,7 @@ public class CobbleEvents {
     }
 
     private static void megaEvolution(MegaEvolutionEvent event) {
+        AdvancementHelper.grantAdvancement(event.getPokemon().getOriginalPokemon().getOwnerPlayer(), "mega/mega_evolve");
         Pokemon pokemon = event.getPokemon().getEntity().getPokemon();
         MegaGimmick.megaEvolveInBattle(
                 pokemon,

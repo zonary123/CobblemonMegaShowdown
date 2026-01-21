@@ -5,7 +5,6 @@ import com.cobblemon.mod.common.client.render.models.blockbench.repository.Varyi
 import com.cobblemon.mod.common.entity.pokemon.PokemonEntity;
 import com.github.yajatkaul.mega_showdown.config.MegaShowdownConfig;
 import com.github.yajatkaul.mega_showdown.render.renderTypes.MSDRenderTypes;
-import com.github.yajatkaul.mega_showdown.utils.GlowHandler;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.mojang.blaze3d.vertex.VertexConsumer;
@@ -22,7 +21,6 @@ import java.util.Optional;
 
 @Mixin(value = LivingEntityRenderer.class)
 public class LivingEntityRendererMixin<T extends LivingEntity, M extends EntityModel<T>> {
-
     @WrapOperation(
             method = "render*",
             at = @At(
@@ -60,7 +58,6 @@ public class LivingEntityRendererMixin<T extends LivingEntity, M extends EntityM
                         delegate
                 );
 
-        MSDRenderTypes.teraShader.safeGetUniform("TeraTint").set(GlowHandler.getTeraColor(aspect.get()));
-        return buffer.getBuffer(MSDRenderTypes.pokemonShader(texture));
+        return buffer.getBuffer(MSDRenderTypes.pokemonShader(texture, aspect.get()));
     }
 }

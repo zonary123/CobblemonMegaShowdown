@@ -24,7 +24,7 @@ public class LoadShowdown {
                 yoink("/assets/mega_showdown/showdown/moves.js", showdown_data.resolve("moves.js"));
                 yoink("/assets/mega_showdown/showdown/battle-actions.js", showdown_sim.resolve("battle-actions.js"));
                 yoink("/assets/mega_showdown/showdown/pokemon.js", showdown_sim.resolve("pokemons.js"));
-                yoink("/assets/mega_showdown/showdown/abilities.js", showdown_data.resolve("abilities.js"));
+                yoink("/assets/mega_showdown/showdown/abilities.js", showdown_data.resolve("ability.js"));
                 yoink("/assets/mega_showdown/showdown/side.js", showdown_sim.resolve("side.js"));
                 yoink("/assets/mega_showdown/showdown/conditions.js", showdown_data.resolve("conditions.js"));
                 yoink("/assets/mega_showdown/showdown/index.js", showdown.resolve("index.js"));
@@ -37,6 +37,12 @@ public class LoadShowdown {
                 }
                 if (!Files.exists(showdown_mod_data.resolve("typechart.js"))) {
                     yoink("/assets/mega_showdown/showdown/mods/typechart.js", showdown_mod_data.resolve("typechart.js"));
+                }
+                if (!Files.exists(showdown_mod_data.resolve("moves.js"))) {
+                    yoink("/assets/mega_showdown/showdown/mods/moves.js", showdown_mod_data.resolve("moves.js"));
+                }
+                if (!Files.exists(showdown_mod_data.resolve("ability.js"))) {
+                    yoink("/assets/mega_showdown/showdown/mods/abilities.js", showdown_mod_data.resolve("ability.js"));
                 }
 
                 MegaShowdown.LOGGER.info("All files are ready!");

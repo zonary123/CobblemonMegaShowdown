@@ -19,13 +19,13 @@ import java.util.Optional;
 public record Effect(
         Optional<MinecraftParticle> minecraft,
         Optional<SnowStormParticle> snowStorm,
-        Optional<Float> battle_pause,
+        Optional<Float> battle_pause_apply,
         Optional<Float> battle_pause_revert
 ) {
     public static final Codec<Effect> CODEC = RecordCodecBuilder.create(instance -> instance.group(
             MinecraftParticle.CODEC.optionalFieldOf("minecraft").forGetter(Effect::minecraft),
             SnowStormParticle.CODEC.optionalFieldOf("snowstorm").forGetter(Effect::snowStorm),
-            Codec.FLOAT.optionalFieldOf("battle_pause").forGetter(Effect::battle_pause),
+            Codec.FLOAT.optionalFieldOf("battle_pause_apply").forGetter(Effect::battle_pause_apply),
             Codec.FLOAT.optionalFieldOf("battle_pause_revert").forGetter(Effect::battle_pause_revert)
     ).apply(instance, Effect::new));
 
@@ -91,13 +91,13 @@ public record Effect(
         }
         if (this.snowStorm().isPresent() && this.minecraft().isPresent()) {
             this.minecraft.get().apply(context.getEntity());
-            this.snowStorm.get().applyBattle(context.getEntity(), aspects, other, battlePokemon, battle_pause.orElse(1f), false);
+            this.snowStorm.get().applyBattle(context.getEntity(), aspects, other, battlePokemon, battle_pause_apply.orElse(1f), false);
         } else if (this.minecraft().isPresent()) {
             this.minecraft.get().apply(context.getEntity());
             AspectUtils.applyAspects(context, aspects);
             AspectUtils.updatePackets(battlePokemon);
         } else if (this.snowStorm().isPresent()) {
-            this.snowStorm.get().applyBattle(context.getEntity(), aspects, other, battlePokemon, battle_pause.orElse(1f), false);
+            this.snowStorm.get().applyBattle(context.getEntity(), aspects, other, battlePokemon, battle_pause_apply.orElse(1f), false);
         } else {
             AspectUtils.applyAspects(context, aspects);
             AspectUtils.updatePackets(battlePokemon);

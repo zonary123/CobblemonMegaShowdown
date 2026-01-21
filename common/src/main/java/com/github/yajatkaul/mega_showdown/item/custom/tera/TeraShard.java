@@ -35,8 +35,8 @@ public class TeraShard extends PokemonSelectingItem {
 
             if (pokemon.getEntity() != null) {
                 ParticlesList.glowParticles.apply(pokemon.getEntity());
-
             }
+
             pokemon.setTeraType(teraType);
             pokemon.setTeraType(teraType);
             AdvancementHelper.grantAdvancement(pokemon.getOwnerPlayer(), "tera/change_tera");

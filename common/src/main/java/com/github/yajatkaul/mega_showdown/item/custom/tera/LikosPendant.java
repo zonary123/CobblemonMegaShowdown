@@ -5,17 +5,20 @@ import com.cobblemon.mod.common.api.pokemon.PokemonProperties;
 import com.cobblemon.mod.common.api.types.tera.TeraTypes;
 import com.cobblemon.mod.common.entity.pokemon.PokemonEntity;
 import com.github.yajatkaul.mega_showdown.MegaShowdown;
-import com.github.yajatkaul.mega_showdown.codec.Effect;
 import com.github.yajatkaul.mega_showdown.components.MegaShowdownDataComponents;
 import com.github.yajatkaul.mega_showdown.config.MegaShowdownConfig;
 import com.github.yajatkaul.mega_showdown.item.custom.ToolTipItem;
+import com.github.yajatkaul.mega_showdown.utils.PokemonBehaviourHelper;
 import io.wispforest.accessories.api.AccessoriesCapability;
 import io.wispforest.accessories.api.AccessoriesContainer;
 import io.wispforest.accessories.data.SlotTypeLoader;
 import io.wispforest.accessories.impl.ExpandedSimpleContainer;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.component.DataComponents;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
@@ -27,6 +30,8 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.ItemLore;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.Vec3;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
@@ -50,7 +55,7 @@ public class LikosPendant extends ToolTipItem {
     }
 
     @Override
-    public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand interactionHand) {
+    public @NotNull InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand interactionHand) {
         ItemStack stack = player.getItemInHand(interactionHand);
         AccessoriesCapability capability = AccessoriesCapability.get(player);
 
@@ -134,7 +139,17 @@ public class LikosPendant extends ToolTipItem {
 
             level.addFreshEntity(terapagos);
 
-            Effect.getEffect("mega_showdown:pendant_effect").applyEffects(terapagos.getPokemon(), List.of(), null);
+            terapagos.setNoAi(true);
+            SoundEvent soundEvent = BuiltInRegistries.SOUND_EVENT.get(ResourceLocation.tryParse("mega_showdown:terapagos_spawn"));
+            Vec3 entityPos = terapagos.position();
+            PokemonBehaviourHelper.Companion.snowStormPartileSpawner(
+                    terapagos, ResourceLocation.parse("cobblemon:pendant_effect"), List.of("target"), null, null
+            );
+            terapagos.level().playSound(
+                    null, entityPos.x, entityPos.y, entityPos.z,
+                    soundEvent,
+                    SoundSource.PLAYERS, 0.6f, 1f
+            );
         }
     }
 }

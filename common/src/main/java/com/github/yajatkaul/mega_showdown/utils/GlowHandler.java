@@ -1,9 +1,5 @@
 package com.github.yajatkaul.mega_showdown.utils;
 
-import com.cobblemon.mod.common.api.types.ElementalType;
-import com.cobblemon.mod.common.api.types.ElementalTypes;
-import com.cobblemon.mod.common.api.types.tera.TeraType;
-import com.cobblemon.mod.common.api.types.tera.elemental.ElementalTypeTeraType;
 import com.cobblemon.mod.common.entity.pokemon.PokemonEntity;
 import com.github.yajatkaul.mega_showdown.codec.ZCrystal;
 import net.minecraft.ChatFormatting;
@@ -43,7 +39,7 @@ public class GlowHandler {
         }
     }
 
-    public static void applyTeraGlow(PokemonEntity pokemon) {
+    public static void applyTeraGlow(PokemonEntity pokemon, String aspect) {
         if (pokemon.level() instanceof ServerLevel serverLevel) {
             pokemon.addEffect(new MobEffectInstance(MobEffects.GLOWING, Integer.MAX_VALUE, 0, false, false));
             ServerScoreboard scoreboard = serverLevel.getScoreboard();
@@ -51,7 +47,7 @@ public class GlowHandler {
 
             PlayerTeam team = scoreboard.getPlayerTeam(teamName);
 
-            ChatFormatting color = getGlowForTera(pokemon.getPokemon().getTeraType());
+            ChatFormatting color = getFormattingForColor(aspect);
             if (team == null) {
                 team = scoreboard.addPlayerTeam(teamName);
                 team.setColor(color);
@@ -79,33 +75,23 @@ public class GlowHandler {
         }
     }
 
-    private static ChatFormatting getGlowForTera(TeraType teraType) {
-        if (teraType instanceof ElementalTypeTeraType elementalTera) {
-            return getGlowForElemental(elementalTera.getType());
-        }
-        return ChatFormatting.WHITE;
-    }
-
-    private static ChatFormatting getGlowForElemental(ElementalType type) {
-        if (type.equals(ElementalTypes.BUG)) return ChatFormatting.DARK_GREEN;
-        if (type.equals(ElementalTypes.DARK)) return ChatFormatting.BLACK;
-        if (type.equals(ElementalTypes.DRAGON)) return ChatFormatting.DARK_BLUE;
-        if (type.equals(ElementalTypes.ELECTRIC)) return ChatFormatting.YELLOW;
-        if (type.equals(ElementalTypes.FAIRY)) return ChatFormatting.LIGHT_PURPLE;
-        if (type.equals(ElementalTypes.FIGHTING)) return ChatFormatting.DARK_RED;
-        if (type.equals(ElementalTypes.FIRE)) return ChatFormatting.RED;
-        if (type.equals(ElementalTypes.FLYING)) return ChatFormatting.GRAY;
-        if (type.equals(ElementalTypes.GHOST)) return ChatFormatting.DARK_PURPLE;
-        if (type.equals(ElementalTypes.GRASS)) return ChatFormatting.GREEN;
-        if (type.equals(ElementalTypes.GROUND)) return ChatFormatting.DARK_RED;
-        if (type.equals(ElementalTypes.ICE)) return ChatFormatting.AQUA;
-        if (type.equals(ElementalTypes.NORMAL)) return ChatFormatting.WHITE;
-        if (type.equals(ElementalTypes.POISON)) return ChatFormatting.DARK_PURPLE;
-        if (type.equals(ElementalTypes.PSYCHIC)) return ChatFormatting.LIGHT_PURPLE;
-        if (type.equals(ElementalTypes.ROCK)) return ChatFormatting.DARK_GRAY;
-        if (type.equals(ElementalTypes.STEEL)) return ChatFormatting.GRAY;
-        if (type.equals(ElementalTypes.WATER)) return ChatFormatting.BLUE;
-        return ChatFormatting.WHITE;
+    private static ChatFormatting getFormattingForColor(String color) {
+        return switch (color) {
+            case "red" -> ChatFormatting.RED;
+            case "blue" -> ChatFormatting.BLUE;
+            case "green" -> ChatFormatting.GREEN;
+            case "yellow" -> ChatFormatting.YELLOW;
+            case "brown" -> ChatFormatting.DARK_RED;
+            case "light_blue" -> ChatFormatting.AQUA;
+            case "purple" -> ChatFormatting.DARK_BLUE;
+            case "magenta" -> ChatFormatting.LIGHT_PURPLE;
+            case "black" -> ChatFormatting.BLACK;
+            case "gray" -> ChatFormatting.GRAY;
+            case "lime" -> ChatFormatting.DARK_GREEN;
+            case "indigo" -> ChatFormatting.DARK_PURPLE;
+            case "tan" -> ChatFormatting.DARK_GRAY;
+            default -> ChatFormatting.WHITE;
+        };
     }
 
     private static ChatFormatting getGlowForColor(String color) {

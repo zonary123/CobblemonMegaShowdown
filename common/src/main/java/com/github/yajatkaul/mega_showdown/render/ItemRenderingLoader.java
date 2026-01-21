@@ -12,14 +12,13 @@ import net.minecraft.util.profiling.ProfilerFiller;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.InputStreamReader;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
+import java.util.HashMap;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 
 public class ItemRenderingLoader implements ResourceManagerReloadListener {
-    public static final List<ItemRenderingCodec> REGISTRY = new ArrayList<>();
+    public static final HashMap<ResourceLocation, ItemRenderingCodec> REGISTRY = new HashMap<>();
     private static final String DIRECTORY = "item_rendering";
 
     public static void load() {
@@ -36,7 +35,7 @@ public class ItemRenderingLoader implements ResourceManagerReloadListener {
                         JsonOps.INSTANCE,
                         JsonParser.parseReader(new InputStreamReader(stream))
                 ).result().orElseThrow();
-                REGISTRY.add(codec);
+                REGISTRY.put(codec.itemId(), codec);
             } catch (Exception e) {
                 MegaShowdown.LOGGER.error("Failed loading item_rendering JSON: {}", id, e);
             }

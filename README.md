@@ -6,6 +6,13 @@
 
 **![](https://media.forgecdn.net/attachments/description/1189523/description_97ed6f11-026f-449b-97ee-86e1500c2794.png)**
 
+## **Datacking**
+
+You can datapack almost everything from this mod like custom mega's, gmax, custom Pokemon types and way more. You can check out the [Wiki](https://github.com/yajatkaul/CobblemonMegaShowdown/wiki) for more details.
+
+
+**![](https://media.forgecdn.net/attachments/description/1189523/description_97ed6f11-026f-449b-97ee-86e1500c2794.png)**
+
 # **Accessories Integration**
 
 ![](https://media.forgecdn.net/attachments/description/1189523/description_b8f1e56c-7f90-47dd-948c-e096d5b53918.png)
@@ -14,6 +21,7 @@
 
 # **Features**
 
+- Datpackable features
 - Cosmetics
 - All form changes
 - Ridding supported

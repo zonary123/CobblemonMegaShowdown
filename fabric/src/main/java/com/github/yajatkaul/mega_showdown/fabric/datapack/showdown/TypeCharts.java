@@ -24,7 +24,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 public class TypeCharts implements DataRegistry {
-    private static final ResourceLocation ID = ResourceLocation.fromNamespaceAndPath(MegaShowdown.MOD_ID, "showdown/typecharts");
+    private static final ResourceLocation ID = ResourceLocation.fromNamespaceAndPath(MegaShowdown.MOD_ID, "mega_showdown/showdown/typecharts");
     private static final SimpleObservable<TypeCharts> OBSERVABLE = new SimpleObservable<>();
     private final Map<String, String> typeChartScripts = new HashMap<>();
     public static final TypeCharts INSTANCE = new TypeCharts();
@@ -72,7 +72,7 @@ public class TypeCharts implements DataRegistry {
     @Override
     public void reload(@NotNull ResourceManager resourceManager) {
         typeChartScripts.clear();
-        resourceManager.listResources("showdown/typecharts", path -> path.getPath().endsWith(".js")).forEach((id, resource) -> {
+        resourceManager.listResources("mega_showdown/showdown/typecharts", path -> path.getPath().endsWith(".js")).forEach((id, resource) -> {
             try (BufferedReader reader = new BufferedReader(new InputStreamReader(resource.open(), StandardCharsets.UTF_8))) {
                 String js = reader.lines().collect(Collectors.joining("\n"));
                 String typeChartId = new File(id.getPath()).getName().replace(".js", "");

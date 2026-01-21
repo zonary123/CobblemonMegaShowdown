@@ -6,10 +6,13 @@ import com.cobblemon.mod.common.pokemon.Pokemon;
 import com.github.yajatkaul.mega_showdown.gimmick.MegaGimmick;
 import com.github.yajatkaul.mega_showdown.gimmick.UltraGimmick;
 import com.github.yajatkaul.mega_showdown.networking.client.packet.InteractionWheelPacket;
+import com.github.yajatkaul.mega_showdown.render.layerEntities.states.TeraCrystalState;
+import com.github.yajatkaul.mega_showdown.utils.duck.cobblemon.interfaces.PokemonEntityDuck;
 import dev.architectury.networking.NetworkManager;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -18,7 +21,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import java.util.concurrent.CompletableFuture;
 
 @Mixin(value = PokemonEntity.class, remap = false)
-public abstract class PokemonEntityMixin {
+public abstract class PokemonEntityMixin implements PokemonEntityDuck {
     @Inject(
             method = "recallWithAnimation",
             at = @At("HEAD"),
@@ -44,7 +47,7 @@ public abstract class PokemonEntityMixin {
         Pokemon pokemon = self.getPokemon();
 
         if (pokemon.getOwnerPlayer() == player) {
-            boolean shouldPokemonMega = SpeciesFeatureAssignments.getFeatures(pokemon.getSpecies()).contains("mega_evolution");
+            boolean shouldPokemonMega = SpeciesFeatureAssignments.getFeatures(pokemon.getSpecies()).contains("mega_evolution") || pokemon.getSpecies().getFeatures().contains("mega_evolution");
             boolean shouldPokemonUltra = pokemon.getSpecies().getName().equals("Necrozma");
 
             boolean canPokemonMega = MegaGimmick.isMega(pokemon) || MegaGimmick.canMega(pokemon);
@@ -52,5 +55,61 @@ public abstract class PokemonEntityMixin {
 
             NetworkManager.sendToPlayer(player, new InteractionWheelPacket(shouldPokemonMega, shouldPokemonUltra, canPokemonMega, canPokemonUltra));
         }
+    }
+
+    @Unique
+    private final TeraCrystalState mega_showdown$teraCrystalState = new TeraCrystalState();
+    @Unique
+    private boolean mega_showdown$teraCrystalPlayed = false;
+    @Unique
+    private boolean mega_showdown$teraCrystalPass = false;
+    @Unique
+    private double mega_showdown$animCrystalSeconds = 0.0;
+    @Unique
+    private long mega_showdown$lastCrystalTimeNs = -1L;
+
+    @Override
+    public TeraCrystalState mega_showdown$getTeraCrystalState() {
+        return this.mega_showdown$teraCrystalState;
+    }
+
+    @Override
+    public boolean mega_showdown$isTeraCrystalPlayed() {
+        return this.mega_showdown$teraCrystalPlayed;
+    }
+
+    @Override
+    public void mega_showdown$setTeraCrystalPlayed(boolean value) {
+        this.mega_showdown$teraCrystalPlayed = value;
+    }
+
+    @Override
+    public boolean mega_showdown$isTeraCrystalPass() {
+        return this.mega_showdown$teraCrystalPass;
+    }
+
+    @Override
+    public void mega_showdown$setTeraCrystalPass(boolean value) {
+        this.mega_showdown$teraCrystalPass = value;
+    }
+
+    @Override
+    public double mega_showdown$getAnimCrystalSeconds() {
+        return this.mega_showdown$animCrystalSeconds;
+    }
+
+    @Override
+    public void mega_showdown$setAnimCrystalSeconds(double value) {
+        this.mega_showdown$animCrystalSeconds = value;
+    }
+
+    @Override
+    public long mega_showdown$getLastCrystalTimeNs() {
+        return this.mega_showdown$lastCrystalTimeNs;
+    }
+
+    @Override
+    public void mega_showdown$setLastCrystalTimeNs(long value) {
+        this.mega_showdown$lastCrystalTimeNs = value;
     }
 }

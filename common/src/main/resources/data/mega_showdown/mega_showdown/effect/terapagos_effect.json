@@ -22,5 +22,5 @@
       "animations_apply": ["cry"]
     }
   },
-  "battle_pause": 2
+  "battle_pause_apply": 2
 }

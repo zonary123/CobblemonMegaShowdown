@@ -16,7 +16,7 @@
     "idle": {
       "allPoseTypes": true,
       "animations": [
-        "q.bedrock('dmax_clouds', 'ground_idle')"
+        "q.bedrock('dmax_clouds', 'idle')"
       ]
     }
   }

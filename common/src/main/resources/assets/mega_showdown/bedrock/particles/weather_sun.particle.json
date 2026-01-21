@@ -5,7 +5,7 @@
 			"identifier": "mega_showdown:weather_sun",
 			"basic_render_parameters": {
 				"material": "particles_blend",
-				"texture": "textures/particles/sun"
+				"texture": "mega_showdown:textures/particles/sun"
 			}
 		},
 		"events": {

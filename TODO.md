@@ -1,5 +1,6 @@
 # TODO
 - Dynamax first get in pokeball then throw
+- work on move templates type change when needed
 
 # Future
 - Make custom weather datapackable

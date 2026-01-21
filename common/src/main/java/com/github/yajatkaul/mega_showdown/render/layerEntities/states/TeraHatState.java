@@ -7,8 +7,11 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class TeraHatState extends PosableState {
+    private final SchedulingTracker schedulingTracker;
+
     public TeraHatState() {
         setPose("idle");
+        this.schedulingTracker = new SchedulingTracker();
     }
 
     @Override
@@ -18,11 +21,11 @@ public class TeraHatState extends PosableState {
 
     @Override
     public void updatePartialTicks(float partialTicks) {
-        this.setCurrentPartialTicks(this.getCurrentPartialTicks() + partialTicks);
+        this.setCurrentPartialTicks(partialTicks);
     }
 
     @Override
     public @NotNull SchedulingTracker getSchedulingTracker() {
-        return new SchedulingTracker();
+        return schedulingTracker;
     }
 }

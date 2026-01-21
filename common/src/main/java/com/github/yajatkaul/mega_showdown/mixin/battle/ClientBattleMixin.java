@@ -16,7 +16,7 @@ public class ClientBattleMixin implements ClientBattleDuck {
     private List<SingleActionRequest> pendingActionRequests;
 
     @Override
-    public boolean pendingGimmick(ShowdownMoveset.Gimmick gimmick) {
+    public boolean mega_showdown$pendingGimmick(ShowdownMoveset.Gimmick gimmick) {
         for (SingleActionRequest request : this.pendingActionRequests) {
             if (request.getResponse() instanceof MoveActionResponse response) {
                 if (gimmick.getId().equals(response.getGimmickID())) {

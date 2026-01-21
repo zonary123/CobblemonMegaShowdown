@@ -1,9 +1,15 @@
 {
   "showdown_id": "slowbronite",
   "pokemons": ["Slowbro"],
-  "aspect": {
-    "apply_aspects": ["mega_evolution=mega"],
-    "revert_aspects": ["mega_evolution=none"],
-    "blacklist_forms_apply": ["Galar"]
+  "aspect_conditions": {
+    "apply": {
+      "aspect": {
+        "blacklist_forms": ["Galar"]
+      },
+      "aspects": ["mega_evolution=mega"]
+    },
+    "revert": {
+      "aspects": ["mega_evolution=none"]
+    }
   }
 }

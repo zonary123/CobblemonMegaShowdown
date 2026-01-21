@@ -134,17 +134,17 @@ public class AspectUtils {
             pokemon.getPersistentData().remove("battle_end_revert");
         }
 
-        if (pokemon.getPersistentData().contains("apply_aspects")) {
+        if (pokemon.getPersistentData().contains("aspects")) {
             List<EffectPair> aspects = AspectUtils.getRevertDataPokemon(
                     pokemon,
-                    "apply_aspects"
+                    "aspects"
             );
 
             for (EffectPair effectPair : aspects) {
                 effectPair.effect.revertEffects(pokemon, effectPair.aspects, null);
             }
 
-            pokemon.getPersistentData().remove("apply_aspects");
+            pokemon.getPersistentData().remove("aspects");
         }
 
         if (pokemon.getPersistentData().contains("revert_aspects")) {
@@ -160,7 +160,7 @@ public class AspectUtils {
             pokemon.getPersistentData().remove("revert_aspects");
         }
 
-        if (pokemon.getPersistentData().getBoolean("is_tera")) {
+        if (pokemon.getPersistentData().getBoolean("is_tera") || pokemon.getAspects().stream().anyMatch((s) -> s.startsWith("msd:tera_"))) {
             pokemon.getAspects().stream().filter(a -> a.startsWith("msd:tera_")).forEach(name -> {
                 UnaspectPropertyType.INSTANCE.fromString(name).apply(pokemon);
             });
@@ -174,7 +174,6 @@ public class AspectUtils {
         }
 
         if (pokemon.getPersistentData().getBoolean("is_max")) {
-            pokemon.getPersistentData().remove("is_max");
             if (pokemon.getAspects().contains("gmax")) {
                 Effect.getEffect("mega_showdown:dynamax").revertEffects(pokemon, List.of("dynamax_form=none"), null);
             } else {
@@ -183,7 +182,10 @@ public class AspectUtils {
             }
             if (pokemon.getEntity() != null) {
                 MaxGimmick.startGradualScalingDown(pokemon);
+            } else {
+                pokemon.setScaleModifier(pokemon.getPersistentData().getFloat("orignal_size"));
             }
+            pokemon.getPersistentData().remove("is_max");
         }
 
         if (pokemon.getPersistentData().getBoolean("form_changing")) {

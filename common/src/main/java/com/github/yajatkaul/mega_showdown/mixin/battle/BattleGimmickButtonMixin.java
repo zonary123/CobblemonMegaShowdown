@@ -38,7 +38,7 @@ public class BattleGimmickButtonMixin implements SelectableDuck {
         if (battle == null) return false;
 
         ShowdownMoveset.Gimmick gimmick = this.mega_showdown$gimmick;
-        return ((ClientBattleDuck) (Object) battle).pendingGimmick(gimmick);
+        return ((ClientBattleDuck) (Object) battle).mega_showdown$pendingGimmick(gimmick);
     }
 
     @Inject(method = "toggle", at = @At("HEAD"), remap = false)

@@ -13,7 +13,7 @@
 			"bones": [
 				{
 					"name": "crown",
-					"pivot": [0, 6.5, -12.05]
+					"pivot": [0, 0, 0]
 				},
 				{
 					"name": "side3",
