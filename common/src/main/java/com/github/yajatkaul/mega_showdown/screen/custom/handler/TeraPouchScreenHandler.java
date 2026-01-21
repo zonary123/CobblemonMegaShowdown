@@ -44,29 +44,48 @@ public class TeraPouchScreenHandler extends AbstractContainerMenu {
         addPlayerHotbar(inv);
     }
 
-    @Override
-    public @NotNull ItemStack quickMoveStack(Player playerIn, int invSlot) {
-        ItemStack newStack = ItemStack.EMPTY;
-        Slot slot = this.slots.get(invSlot);
-        if (slot.hasItem()) {
-            ItemStack originalStack = slot.getItem();
-            newStack = originalStack.copy();
-            if (invSlot < this.teraInv.getContainerSize()) {
-                if (!this.moveItemStackTo(originalStack, this.teraInv.getContainerSize(), this.slots.size(), true)) {
-                    return ItemStack.EMPTY;
-                }
-            } else if (!this.moveItemStackTo(originalStack, 0, this.teraInv.getContainerSize(), false)) {
-                return ItemStack.EMPTY;
-            }
+  @Override
+  public @NotNull ItemStack quickMoveStack(Player playerIn, int invSlot) {
+    ItemStack itemstack = ItemStack.EMPTY;
+    Slot slot = this.slots.get(invSlot);
 
-            if (originalStack.isEmpty()) {
-                slot.set(ItemStack.EMPTY);
-            } else {
-                slot.setChanged();
-            }
+    if (slot.hasItem()) {
+      ItemStack originalStack = slot.getItem();
+      itemstack = originalStack.copy();
+      int count = originalStack.getCount();
+
+      if (invSlot < this.teraInv.getContainerSize()) {
+        if (!this.moveItemStackTo(originalStack,
+          this.teraInv.getContainerSize(),
+          this.slots.size(),
+          true)) {
+          return ItemStack.EMPTY;
         }
-        return newStack;
+      } else {
+        if (!this.moveItemStackTo(originalStack,
+          0,
+          this.teraInv.getContainerSize(),
+          false)) {
+          return ItemStack.EMPTY;
+        }
+      }
+
+      if (originalStack.isEmpty()) {
+        slot.set(ItemStack.EMPTY);
+      } else {
+        slot.setChanged();
+      }
+
+      if (originalStack.getCount() == count) {
+        return ItemStack.EMPTY;
+      }
+
+      slot.onTake(playerIn, originalStack);
     }
+
+    return itemstack;
+  }
+
 
     @Override
     public void clicked(int slotId, int dragType, ClickType clickType, Player player) {

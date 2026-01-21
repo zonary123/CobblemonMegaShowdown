@@ -13,8 +13,13 @@ import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class TeraPouch extends Item {
+    private static final Map<UUID, Long> lastAccessMap = new ConcurrentHashMap<>();
+
     public TeraPouch(Properties properties) {
         super(properties);
     }
@@ -26,6 +31,12 @@ public class TeraPouch extends Item {
         if (player.level().isClientSide || player.isCrouching()) {
             return InteractionResultHolder.pass(stack);
         }
+        long currentTime = System.currentTimeMillis();
+        UUID playerUUID = player.getUUID();
+        long lastAccessTime = lastAccessMap.getOrDefault(playerUUID, 0L);
+        if (currentTime - lastAccessTime < 1000) return InteractionResultHolder.pass(stack);
+
+        lastAccessMap.put(playerUUID, currentTime);
 
         player.openMenu(
                 new SimpleMenuProvider(
